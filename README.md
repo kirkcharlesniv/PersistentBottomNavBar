@@ -88,25 +88,25 @@ class MyApp extends StatelessWidget {
         screens: _buildScreens(),
         items: _navBarsItems(),
         confineInSafeArea: true,
-        backgroundColor: Colors.white,
-        handleAndroidBackButtonPress: true,
-        resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears.
-        stateManagement: true,
-        hideNavigationBarWhenKeyboardShows: true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument.
+        backgroundColor: Colors.white, // Default is Colors.white.
+        handleAndroidBackButtonPress: true, // Default is true.
+        resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
+        stateManagement: true, // Default is true.
+        hideNavigationBarWhenKeyboardShows: true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
         decoration: NavBarDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        colorBehindNavBar: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          colorBehindNavBar: Colors.white,
         ),
         popAllScreensOnTapOfSelectedTab: true,
-        popActionScreens: PopActionScreensType.all;
+        popActionScreens: PopActionScreensType.all,
         itemAnimationProperties: ItemAnimationProperties( // Navigation Bar's items animation properties.
-        duration: Duration(milliseconds: 200),
-        curve: Curves.ease,
+          duration: Duration(milliseconds: 200),
+          curve: Curves.ease,
         ),
         screenTransitionAnimation: ScreenTransitionAnimation( // Screen transition animation on change of selected tab.
-        animateTabTransition: true,
-        curve: Curves.ease,
-        duration: Duration(milliseconds: 200),
+          animateTabTransition: true,
+          curve: Curves.ease,
+          duration: Duration(milliseconds: 200),
         ),
         navBarStyle: NavBarStyle.style1, // Choose the nav bar style with this property.
     );
@@ -119,8 +119,8 @@ class MyApp extends StatelessWidget {
 
     List<Widget> _buildScreens() {
         return [
-        MainScreen(),
-        SettingsScreen()
+          MainScreen(),
+          SettingsScreen()
         ];
     }
 
@@ -133,14 +133,14 @@ class MyApp extends StatelessWidget {
             PersistentBottomNavBarItem(
                 icon: Icon(CupertinoIcons.home),
                 title: ("Home"),
-                activeColor: CupertinoColors.activeBlue,
-                inactiveColor: CupertinoColors.systemGrey,
+                activeColorPrimary: CupertinoColors.activeBlue,
+                inactiveColorPrimary: CupertinoColors.systemGrey,
             ),
             PersistentBottomNavBarItem(
                 icon: Icon(CupertinoIcons.settings),
                 title: ("Settings"),
-                activeColor: CupertinoColors.activeBlue,
-                inactiveColor: CupertinoColors.systemGrey,
+                activeColorPrimary: CupertinoColors.activeBlue,
+                inactiveColorPrimary: CupertinoColors.systemGrey,
             ),
         ];
     }
@@ -149,6 +149,7 @@ class MyApp extends StatelessWidget {
 
 ## Navigator Functions
 
+**Note: You still can use regular Navigator functions like 'pushNamed' but be sure to check the argument `routeAndNavigatorSettings` your `PersistentBottomNavBarItem` for route settings and some other navigator related properties**
 To push a new screen, use the following functions to control the `visibility` of bottom navigation bar on a particular screen. You can use your own logic to implement `platform-specific` behavior. One of the solutions could be to use the property `withNavBar` and toggle it according to the Platform.
 
 In `platform-specific` behavior, while pushing a new screen, on `Android` it will push the screen WITHOUT the bottom navigation bar but on `iOS` it will persist the bottom navigation bar. This is the default behavior specified by each platform.
@@ -206,13 +207,13 @@ If you are pushing a new `modal` screen, use the following function:
 
     ```dart
         Navigator.of(context).pushAndRemoveUntil(
-        CupertinoPageRoute(
-        builder: (BuildContext context) {
-            return FirstScreen();
-        },
-        ),
-        (_) => false,
-    );
+          CupertinoPageRoute(
+            builder: (BuildContext context) {
+              return FirstScreen();
+            },
+          ),
+          (_) => false,
+        );
     ```
 
 - To push bottom sheet on top of the Navigation Bar, use showModalBottomScreen and set it's property `useRootNavigator` to true. See example project for an illustration.
@@ -251,12 +252,12 @@ If you want to have your own style for the navigation bar, follow these steps:
                         data: IconThemeData(
                             size: 26.0,
                             color: isSelected
-                                ? (item.activeColorAlternate == null
-                                    ? item.activeColor
-                                    : item.activeColorAlternate)
-                                : item.inactiveColor == null
-                                    ? item.activeColor
-                                    : item.inactiveColor),
+                                ? (item.activeColorSecondary == null
+                                    ? item.activeColorPrimary
+                                    : item.activeColorSecondary)
+                                : item.inactiveColorPrimary == null
+                                    ? item.activeColorPrimary
+                                    : item.inactiveColorPrimary),
                         child: item.icon,
                         ),
                     ),
@@ -269,10 +270,10 @@ If you want to have your own style for the navigation bar, follow these steps:
                             item.title,
                             style: TextStyle(
                                 color: isSelected
-                                    ? (item.activeColorAlternate == null
-                                        ? item.activeColor
-                                        : item.activeColorAlternate)
-                                    : item.inactiveColor,
+                                    ? (item.activeColorSecondary == null
+                                        ? item.activeColorPrimary
+                                        : item.activeColorSecondary)
+                                    : item.inactiveColorPrimary,
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12.0),
                         )),
@@ -334,7 +335,7 @@ If you want to have your own style for the navigation bar, follow these steps:
                 customWidget: CustomNavBarWidget( // Your custom widget goes here
                     items: _navBarsItems(),
                     selectedIndex: _controller.index,
-                    onItemSelected: onItemSelected: (index) {
+                    onItemSelected: (index) {
                         setState(() {
                             _controller.index = index; // NOTE: THIS IS CRITICAL!! Don't miss it!
                         });
